@@ -21,7 +21,10 @@ services:
     # Hard caps — this thing genuinely doesn't need more.
     mem_limit: 64m
     memswap_limit: 64m
-    cpus: 0.10
+    # Relative CPU weight (default 1024). A hard quota (cpus: 0.10) needs
+    # CFS bandwidth support, which some homelab kernels (e.g. Raspberry Pi)
+    # don't have.
+    cpu_shares: 128
     security_opt:
       - no-new-privileges:true
     read_only: true
