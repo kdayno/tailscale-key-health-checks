@@ -9,11 +9,11 @@ services:
       TS_OAUTH_CLIENT_ID: ${TS_OAUTH_CLIENT_ID}
       TS_OAUTH_CLIENT_SECRET: ${TS_OAUTH_CLIENT_SECRET}
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      CHECK_INTERVAL_HOURS: "12"
       # Optional overrides (defaults shown):
       # TAILNET: "-"
       # WARN_DAYS: "7"
       # CRIT_DAYS: "1"
-      # CHECK_INTERVAL_HOURS: "6"
       # SEND_RECOVERY: "true"
       # DISCORD_MENTION: "<@123456789012345678>"   # ping on CRITICAL/EXPIRED
     # Named volume (not a relative bind mount): Portainer git stacks check
