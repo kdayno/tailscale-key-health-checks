@@ -10,12 +10,12 @@ services:
       TS_OAUTH_CLIENT_SECRET: ${TS_OAUTH_CLIENT_SECRET}
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
       CHECK_INTERVAL_HOURS: "12"
+      DISCORD_MENTION: ${DISCORD_MENTION:-}   # ping on CRITICAL/EXPIRED; set in .env
       # Optional overrides (defaults shown):
       # TAILNET: "-"
       # WARN_DAYS: "7"
       # CRIT_DAYS: "1"
       # SEND_RECOVERY: "true"
-      # DISCORD_MENTION: "<@123456789012345678>"   # ping on CRITICAL/EXPIRED
     # Named volume (not a relative bind mount): Portainer git stacks check
     # out to a per-commit path, so ./data wouldn't exist and would be wiped
     # on every redeploy.
