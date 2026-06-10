@@ -16,8 +16,11 @@ services:
       # CHECK_INTERVAL_HOURS: "6"
       # SEND_RECOVERY: "true"
       # DISCORD_MENTION: "<@123456789012345678>"   # ping on CRITICAL/EXPIRED
+    # Named volume (not a relative bind mount): Portainer git stacks check
+    # out to a per-commit path, so ./data wouldn't exist and would be wiped
+    # on every redeploy.
     volumes:
-      - ./data:/data
+      - state:/data
     # Hard caps — this thing genuinely doesn't need more.
     mem_limit: 64m
     memswap_limit: 64m
@@ -35,3 +38,6 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+
+volumes:
+  state:
