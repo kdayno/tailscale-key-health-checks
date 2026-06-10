@@ -1,0 +1,12 @@
+# Secrets — never commit; copy from .env.example
+.env
+
+# Runtime state volume mounted by docker-compose
+data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Packaged distribution archives
+*.zip
