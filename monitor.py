@@ -18,6 +18,7 @@ Uses only the Python standard library. Auth via Tailscale OAuth client
 import json
 import logging
 import os
+import re
 import signal
 import sys
 import time
@@ -43,6 +44,9 @@ RUN_ONCE = os.environ.get("RUN_ONCE", "false").lower() in ("1", "true", "yes")
 DISCORD_MENTION = os.environ.get("DISCORD_MENTION", "")  # e.g. "<@123456789>" to ping on CRITICAL/EXPIRED
 
 API_BASE = "https://api.tailscale.com/api/v2"
+# Discord sits behind Cloudflare, which rejects urllib's default
+# "Python-urllib/3.x" user agent with error 1010.
+USER_AGENT = "tailscale-key-monitor/1.0 (+https://github.com/kdayno/tailscale-key-health-checks)"
 
 # Tier ordering: higher = worse. Alerts fire only when tier number increases.
 TIERS = {"OK": 0, "WARNING": 1, "CRITICAL": 2, "EXPIRED": 3}
@@ -78,7 +82,8 @@ signal.signal(signal.SIGINT, _handle_signal)
 # HTTP helpers (stdlib only)
 # --------------------------------------------------------------------------
 def http_request(url, data=None, headers=None, method=None, timeout=30):
-    req = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
+    headers = {"User-Agent": USER_AGENT, **(headers or {})}
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.status, resp.read()
 
@@ -310,7 +315,9 @@ def main():
             state = check_once(state)
             save_state(state)
         except urllib.error.HTTPError as e:
-            log.error("HTTP %s from %s: %s", e.code, e.url, e.read()[:300])
+            # Never log the webhook URL — its path is a secret token.
+            safe_url = re.sub(r"/webhooks/\S+", "/webhooks/<redacted>", e.url or "")
+            log.error("HTTP %s from %s: %s", e.code, safe_url, e.read()[:300])
         except Exception:
             log.exception("Check cycle failed; will retry next interval.")
 
